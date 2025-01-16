@@ -24,47 +24,54 @@ function renderTickers() {
 }
 
 async function generateStockReport() {
-    if (tickersArr.length === 0) {
-        alert("Please add at least one ticker.");
-        return;
-    }
+  if (tickersArr.length === 0) {
+      alert("Please add at least one ticker.");
+      return;
+  }
 
-    const ticker = tickersArr[0];
-    const startDate = '2023-01-01';
-    const endDate = '2023-01-31';
+  const ticker = tickersArr[0];
+  const startDate = '2023-01-01';
+  const endDate = '2023-01-31';
 
-    try {
-        // Send request to the server to fetch stock data
-        const stockDataResponse = await axios.get('http://localhost:5001/api/stock-data', {
-            params: {
-                ticker: ticker,       // Ticker symbol
-                startDate: startDate, // Start date (YYYY-MM-DD format)
-                endDate: endDate,     // End date (YYYY-MM-DD format)
-            },
-        });
+  // ✅ Show loading animation
+  document.querySelector('.loading-panel').style.display = 'flex';
+  document.querySelector('.output-panel').style.display = 'none';
 
-        if (stockDataResponse.status !== 200 || !stockDataResponse.data) {
-            throw new Error("Invalid stock data response.");
-        }
+  try {
+      // ✅ Fetch Stock Data from Backend
+      const stockDataResponse = await axios.get('http://localhost:5001/api/stock-data', {
+          params: { ticker, startDate, endDate },
+      });
 
-        const stockData = stockDataResponse.data;
+      if (!stockDataResponse.data) {
+          throw new Error("Invalid stock data response.");
+      }
 
-        // Send the stock data to the server to generate a report
-        const reportResponse = await axios.post('http://localhost:5001/api/generate-report', {
-            data: JSON.stringify(stockData),
-        });
+      const stockData = stockDataResponse.data;
 
-        if (reportResponse.status !== 200 || !reportResponse.data) {
-            throw new Error("Invalid report response.");
-        }
+      // ✅ Send Data to Backend for Report Generation
+      const reportResponse = await axios.post('http://localhost:5001/api/generate-report',
+          { stockData },
+          { headers: { 'Content-Type': 'application/json' } }
+      );
 
-        const report = reportResponse.data;
-        document.querySelector('.output-panel').innerHTML = `<h2>Your Report 😜</h2><p>${report}</p>`;
-    } catch (error) {
-        console.error("Error during report generation:", error.message);
-        console.error("Error details:", error.response ? error.response.data : error);
-        alert(`An error occurred: ${error.message}`);
-    }
+      if (!reportResponse.data || !reportResponse.data.report) {
+          throw new Error("Invalid report response.");
+      }
+
+      // ✅ Extract and display the report
+      const report = reportResponse.data.report;
+      document.querySelector('.output-panel').innerHTML = `<h2>Your Report 😜</h2><p>${report}</p>`;
+
+  } catch (error) {
+      console.error("Error during report generation:", error.message);
+      alert(`An error occurred: ${error.message}`);
+  } finally {
+      // ✅ Hide loading and show report
+      document.querySelector('.loading-panel').style.display = 'none';
+      document.querySelector('.output-panel').style.display = 'block';
+  }
 }
 
+// ✅ Attach event listener to button
 document.querySelector('.generate-report-btn').addEventListener('click', generateStockReport);

@@ -62,7 +62,7 @@ main {
 
 h2 {
     text-align: center;
-    font-weight: 400; 
+    font-weight: 400;
     margin-top: -26px;
     background-color: #f6f6f6;
     padding: 0 10px;
@@ -79,7 +79,7 @@ p.tag-line {
 .ticker-choice-display {
     display: flex;
     align-items: center;
-    height: 3em; 
+    height: 3em;
 }
 
 /* controls */
@@ -168,4 +168,14 @@ footer {
 
 .output-panel p::-moz-scrollbar {
     display: none;
+}
+
+.loading-panel {
+  display: none; /* Initially hidden */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  font-size: 16px;
+  color: #333;
 }
