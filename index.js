@@ -38,7 +38,6 @@ async function generateStockReport() {
   document.querySelector('.output-panel').style.display = 'none';
 
   try {
-      // ✅ Fetch Stock Data from Backend
       const stockDataResponse = await axios.get('http://localhost:5001/api/stock-data', {
           params: { ticker, startDate, endDate },
       });
@@ -49,7 +48,6 @@ async function generateStockReport() {
 
       const stockData = stockDataResponse.data;
 
-      // ✅ Send Data to Backend for Report Generation
       const reportResponse = await axios.post('http://localhost:5001/api/generate-report',
           { stockData },
           { headers: { 'Content-Type': 'application/json' } }
