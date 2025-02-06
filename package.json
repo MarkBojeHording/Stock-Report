@@ -8,8 +8,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+<<<<<<< HEAD
     "openai": "4.14.2",
     "vite": "latest"
   },
   "devDependencies": {}
+=======
+    "cors": "^2.8.5",
+    "openai": "4.14.2",
+    "vite": "latest"
+  }
+>>>>>>> master
 }
