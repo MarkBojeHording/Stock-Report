@@ -1,159 +1,112 @@
 const express = require('express');
 const axios = require('axios');
-<<<<<<< HEAD
-const cors = require('cors'); // Import cors
-require('dotenv').config();
-
-const app = express();
-const PORT = process.env.PORT || 5000;
-
-// Enable CORS to allow requests from frontend
-app.use(cors());
-app.use(express.json());
-
-// Check API keys
-=======
 const cors = require('cors');
-const path = require('path');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5002;
 
-app.use(cors());
+// ✅ CORS Configuration: Fully handle preflight requests
+const corsOptions = {
+    origin: '*', // Allow all origins (for development, restrict in production)
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
->>>>>>> master
-const polygonApiKey = process.env.POLYGON_API_KEY;
-const openaiApiKey = process.env.OPENAI_API_KEY;
-
-console.log('Polygon API Key Loaded:', Boolean(polygonApiKey));
-console.log('OpenAI API Key Loaded:', Boolean(openaiApiKey));
-
-if (!polygonApiKey || !openaiApiKey) {
-<<<<<<< HEAD
-    console.error("API keys are missing. Make sure they are defined in your .env file.");
-    process.exit(1);
-}
-
-// Fetch stock data from Polygon.io
-app.post('/api/stock-data', async (req, res) => {
-    const { ticker, startDate, endDate } = req.body;
-
-    try {
-        const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${startDate}/${endDate}?apiKey=${polygonApiKey}`;
-        const response = await axios.get(url);
-        res.status(200).json(response.data);
-    } catch (error) {
-        console.error('Error fetching stock data:', error.message);
-=======
-    console.error("API keys are missing. Check your .env file.");
-    process.exit(1);
-}
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+// ✅ Handle CORS preflight requests
+app.options('*', (req, res) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.sendStatus(204);
 });
 
-// ✅ Fetch stock data from Polygon API
-app.get('/api/stock-data', async (req, res) => {
-    const { ticker, startDate, endDate } = req.query;
+// ✅ Default route (for debugging)
+app.get('/', (req, res) => {
+    res.send(`<h2>🚀 Stock Report API is running!</h2>
+        <p>Available API routes:</p>
+        <ul>
+            <li>📊 <code>POST /api/stock-data</code> - Fetch stock data</li>
+            <li>🤖 <code>POST /api/generate-report</code> - Generate AI stock report</li>
+        </ul>`);
+});
 
+// ✅ Fetch stock data (Polygon API)
+app.post('/api/stock-data', async (req, res) => {
     try {
-        const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${startDate}/${endDate}?adjusted=true&sort=asc&apiKey=${polygonApiKey}`;
-        console.log(`Fetching stock data: ${url}`);
+        const { ticker, startDate, endDate } = req.body;
+        console.log(`🔍 Fetching data for ${ticker} (${startDate} - ${endDate})`);
 
+        const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${startDate}/${endDate}?apiKey=${process.env.POLYGON_API_KEY}`;
         const response = await axios.get(url);
 
-        if (!response.data || response.status !== 200) {
-            throw new Error("Invalid stock data response.");
-        }
-
-        res.json(response.data); // ✅ Send stock data back to client
+        res.status(200).json(response.data);
     } catch (error) {
-        console.error('Stock Data Fetch Error:', error.message);
->>>>>>> master
+        console.error('❌ Error fetching stock data:', error.response?.data || error.message);
         res.status(500).json({ error: 'Failed to fetch stock data.' });
     }
 });
 
-<<<<<<< HEAD
-// Generate AI report using OpenAI API
+// ✅ Generate AI stock report
 app.post('/api/generate-report', async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*'); // Ensure CORS
+
     const { data } = req.body;
 
     try {
-=======
-// ✅ Generate Stock Report using OpenAI API
-app.post('/api/generate-report', async (req, res) => {
-    const { stockData } = req.body;
+        // Parse and filter only necessary stock data fields
+        const parsedData = JSON.parse(data);
 
-    if (!stockData) {
-        return res.status(400).json({ error: "Missing stock data in request body." });
-    }
+        // 🔹 Limit the records sent to OpenAI (3 most recent records)
+        const filteredData = parsedData.results
+            .slice(-3) // Take last 3 records
+            .map(stock => ({
+                date: new Date(stock.t).toISOString().split('T')[0], // Convert timestamp to YYYY-MM-DD
+                open: stock.o,
+                close: stock.c,
+                high: stock.h,
+                low: stock.l,
+                volume: stock.v
+            }));
 
-    try {
-        console.log("Generating report with OpenAI...");
+        console.log(`📉 Sending reduced stock data to OpenAI. Records: ${filteredData.length}`);
 
->>>>>>> master
         const response = await axios.post(
             'https://api.openai.com/v1/chat/completions',
             {
-                model: 'gpt-4',
+                model: 'gpt-3.5-turbo',
                 messages: [
-<<<<<<< HEAD
-                    {
-                        role: 'system',
-                        content: 'You are a trading guru. Write a short report based on the provided data.',
-                    },
-                    {
-                        role: 'user',
-                        content: data,
-                    },
-                ],
+                    { role: 'system', content: 'You are a financial analyst. Analyze the stock data and provide insights.' },
+                    { role: 'user', content: JSON.stringify(filteredData) }
+                ]
             },
             {
                 headers: {
-                    'Authorization': `Bearer ${openaiApiKey}`,
-=======
-                    { role: 'system', content: 'You are a stock market analyst. Write a short financial summary based on the provided data.' },
-                    { role: 'user', content: JSON.stringify(stockData) },
-                ],
-                max_tokens: 150,
-                temperature: 0.7,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${openaiApiKey}`,
->>>>>>> master
+                    'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
                     'Content-Type': 'application/json',
                 },
+                timeout: 10000 // ⏳ Timeout set to 10 seconds
             }
         );
-<<<<<<< HEAD
-        res.status(200).json(response.data.choices[0].message.content);
+
+                const aiResponse = response.data.choices[0].message.content; // Extract text
+                console.log("✅ OpenAI Response:", aiResponse);
+                res.status(200).json({ report: aiResponse }); // Send properly formatted JSON
+
     } catch (error) {
-        console.error('Error generating report:', error.message);
+        console.error("❌ OpenAI Error:", error.message);
+
+        if (error.response) {
+            console.error("🔴 Response Data:", error.response.data);
+        }
+
         res.status(500).json({ error: 'Failed to generate report.' });
     }
 });
 
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
-=======
-
-        if (!response.data || response.status !== 200) {
-            throw new Error("Failed to generate report.");
-        }
-
-        console.log("Report Generated:", response.data.choices[0].message.content);
-
-        res.json({ report: response.data.choices[0].message.content }); // ✅ Ensure JSON format
-    } catch (error) {
-        console.error('Report Generation Error:', error.message);
-        res.status(500).json({ error: 'Failed to generate stock report.' });
-    }
-});
-
-// Start the server
-app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
->>>>>>> master
+// ✅ Start Server
+app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));

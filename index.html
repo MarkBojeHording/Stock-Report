@@ -1,27 +1,32 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dodgy Dave's Stock Predictions</title>
     <link rel="stylesheet" href="index.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
     <header>
         <img src="images/logo-dave-text.png" alt="Dodgy Dave's Stock Predictions">
     </header>
+
     <main>
+        <!-- ✅ Ticker Input Section -->
         <section class="action-panel">
             <form id="ticker-input-form">
-                <label for="ticker-input"> Add up to 3 stock tickers below to get a super accurate stock predictions report👇 </label>
+                <label for="ticker-input">
+                    Add up to 3 stock tickers below to get a super accurate stock predictions report👇
+                </label>
                 <div class="form-input-control">
                     <input type="text" id="ticker-input" placeholder="MSFT">
-                    <button class="add-ticker-btn">
-                        <img src="images/add.svg" class="add-ticker-svg" alt="add">
+                    <button type="button" class="add-ticker-btn">
+                        <img src="images/add.svg" class="add-ticker-svg" alt="Add ticker">
                     </button>
                 </div>
             </form>
@@ -33,19 +38,30 @@
             </button>
             <p class="tag-line">Always correct 15% of the time!</p>
         </section>
-        <section class="loading-panel">
-            <img src="images/loader.svg" alt="loading">
-            <div id="api-message">Querying Stocks API...</div>
+
+        <!-- ✅ Loading Indicator (Hidden by Default) -->
+        <section class="loading-panel" style="display: none;">
+            <div class="loading-wrapper">
+                <img src="images/loader.svg" alt="Loading">
+                <p id="api-message">Querying Stocks API...</p>
+            </div>
         </section>
+
+        <!-- ✅ Report Output Section -->
         <section class="output-panel">
-            <h2>Your Report 😜</h2>
-        </section>
+          <h2>Your Report 😜</h2>
+          <p id="report-content">Your report will appear here...</p> <!-- ✅ Add this line -->
+      </section>
     </main>
+
     <footer>
         &copy; This is not real financial advice!
     </footer>
+
+    <!-- ✅ Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="index.js" type="module"></script>
+    <script src="index.js" type="module" defer></script>
 </body>
+
 
 </html>
