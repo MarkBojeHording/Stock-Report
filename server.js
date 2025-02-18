@@ -82,7 +82,8 @@ app.post('/api/generate-report', async (req, res) => {
                 messages: [
                     { role: 'system', content: 'You are a financial analyst. Analyze the stock data and provide insights.' },
                     { role: 'user', content: JSON.stringify(filteredData) }
-                ]
+                ],
+                max_tokens: 250
             },
             {
                 headers: {

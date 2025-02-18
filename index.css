@@ -3,6 +3,9 @@ html, body {
     padding: 0;
     font-family: 'Poppins', sans-serif;
     background-color: #f6f6f6;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 * {
@@ -25,6 +28,7 @@ header img {
 main {
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 /* Panels */
@@ -40,11 +44,18 @@ main {
 }
 
 .output-panel {
-    display: none;
-    justify-content: flex-start;
-    border: 2px solid;
-    padding: 1em 2em;
+  width: 80%;
+  max-width: 800px;
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: #f9f9f9;
+  display: none;
 }
+
+
+
 
 .loading-panel {
     display: none;
@@ -154,13 +165,6 @@ input[type="text"] {
     content: '';
 }
 
-/* footer */
-
-footer {
-    font-size: 14px;
-    text-align: center;
-}
-
 /* stop ugly scroll bar on some browsers */
 .output-panel p::-webkit-scrollbar {
     display: none;
@@ -190,4 +194,16 @@ footer {
   font-size: 0.8em;
   line-height: 1.6;
   padding: 10px;
+}
+
+main {
+  flex: 1;
+}
+
+footer {
+  text-align: center;
+  padding: 10px;
+  background: #f1f1f1;
+  font-size: 14px;
+  text-align: center;
 }
