@@ -179,3 +179,15 @@ footer {
   font-size: 16px;
   color: #333;
 }
+
+.output-panel {
+  display: none; /* 🔹 Hide initially */
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+#report-content {
+  font-size: 0.8em;
+  line-height: 1.6;
+  padding: 10px;
+}
